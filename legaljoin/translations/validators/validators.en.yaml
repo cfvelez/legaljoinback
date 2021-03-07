@@ -1,0 +1,5 @@
+Contact:
+    name:
+        not_blank: 'Please enter a contact name.'
+        length:
+            min: 'The name length is {{ limit }} at least'

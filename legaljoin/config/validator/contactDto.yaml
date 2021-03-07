@@ -1,0 +1,5 @@
+App\Form\Model\ContactDto:
+    properties:
+        name:
+            - NotBlank: { message: 'Contact.name.not_blank' }
+            - Length: {min: 15, minMessage: "Contact.name.length.min"}

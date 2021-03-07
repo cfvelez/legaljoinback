@@ -1,0 +1,5 @@
+Contact:
+    name:
+        not_blank: 'Ingrese un nombre de contacto'
+        length:
+            min: 'El nombre no puede ser mas largo de {{ limit }} caráteres'

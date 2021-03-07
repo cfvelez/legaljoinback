@@ -1,0 +1,25 @@
+docker-compose up -d
+docker ps
+docker exec -it legaljoin_php_1 bash
+docker exec -it legaljoin_db_1 bash
+DATABASE_URL = mysql://admin:admin@db:3306/legaljoin?serverVersion=5.7
+
+composer require annotations
+composer require symfony orm-pack
+composer require --dev symfony/maker-bundle
+composer require friendsofsymfony/rest-bundle
+composer require symfony/serializer-pack
+composer require symfony/validator twig doctrine/annotations
+composer require symfony/form
+composer require symfony/translation
+
+bin/console make:entity
+bin/console make:migration
+bin/console doctrine:migrations:migrate
+bin/console cache:clear
+
+
+CREATE USER 'legaljoin'@'%' IDENTIFIED BY 'Legaljoin@2021';
+GRANT ALL privileges on legaljoin.* to legaljoin@'%';
+
+FLUSH PRIVILEGES;
