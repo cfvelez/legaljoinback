@@ -19,6 +19,7 @@ class ContactFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => ContactDto::class,
+            'csrf_protection' => false,
         ]);
     }
     public function getBlockPrefix()

@@ -1,2 +1,4 @@
 Symfony:
     great: Symfony es genial
+Authentication:
+    Fail: Credenciales incorrectas, verifique su usuario/contraseña

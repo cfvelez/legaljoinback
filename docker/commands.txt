@@ -12,12 +12,22 @@ composer require symfony/serializer-pack
 composer require symfony/validator twig doctrine/annotations
 composer require symfony/form
 composer require symfony/translation
+composer require symfony/security-bundle
+composer require lexik/jwt-authentication-bundle
+composer require gesdinet/jwt-refresh-token-bundle
 
+bin/console debug:router
 bin/console make:entity
 bin/console make:migration
 bin/console doctrine:migrations:migrate
+bin/console doctrine:schema:update --force
 bin/console cache:clear
+bin/console make:user
+bin/console make:auth
+bin/console lexik:jwt:generate-keypair
+bin/console security:encode-password 123456
 
+Argin2i hasher bcryptπ
 
 CREATE USER 'legaljoin'@'%' IDENTIFIED BY 'Legaljoin@2021';
 GRANT ALL privileges on legaljoin.* to legaljoin@'%';

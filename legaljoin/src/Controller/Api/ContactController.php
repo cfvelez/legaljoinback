@@ -27,6 +27,17 @@ class ContactController extends AbstractFOSRestController{
      }
 
      /**
+     * @Rest\Get(path="/contact/{id}")
+     * @Rest\View(serializerGroups={"contact"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function getByIdAction(string $id, ContactRepository $contactRepository){
+      $contact = $contactRepository->find($id);
+      $statusCode = $contact ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST;
+      $data = $contact ?? 'Contacto no existe';
+      return View::create($data, $statusCode);
+     }
+
+     /**
      * @Rest\Post(path="/contact")
      * @Rest\View(serializerGroups={"contact"}, serializerEnableMaxDepthChecks=true)
      */

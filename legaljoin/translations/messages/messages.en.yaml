@@ -1,2 +1,4 @@
 Symfony:
     great: Symfony is great
+Authentication:
+    Fail: Bad Credentials Check your Username/Password
