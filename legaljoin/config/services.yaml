@@ -27,9 +27,15 @@ services:
     App\Controller\:
         resource: '../src/Controller/'
         tags: ['controller.service_arguments']
+    
+    App\Security\AuthenticationSuccessListener:
+        arguments: ['%lexik_jwt_authentication.token_ttl%']
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSucessResponse, priority: -2 }
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
     App\Security\AuthenticationFailureListener:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_failure, method: onAuthenticationFailureResponse }
+    
