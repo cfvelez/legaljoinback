@@ -1,15 +1,15 @@
 <?php
 
 namespace App\Entity;
-
-use App\Repository\ContactRepository;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=ContactRepository::class)
  */
 class Contact
-{
+{      
+    use TimestampableEntity;
     /**
      * @ORM\Id
      * @ORM\GeneratedValue

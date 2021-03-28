@@ -17,23 +17,45 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ContactController extends AbstractFOSRestController{
 
     /**
+     * @var contactRepository
+     */
+    private $contactRepository;
+    /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+
+     /**
+     * @var TranslatorInterface
+     */
+
+    private $translator;
+
+    public function __construct(ContactRepository $contactRepository, 
+                                EntityManagerInterface $em,
+                                TranslatorInterface $translator)
+    {
+        $this->contactRepository = $contactRepository;
+        $this->em = $em;
+        $this->translator = $translator;
+    }
+
+    /**
      * @Rest\Get(path="/contact")
      * @Rest\View(serializerGroups={"contact"}, serializerEnableMaxDepthChecks=true)
      */
-     public function getAction(ContactRepository $contactRepository, TranslatorInterface $translator){
-      $translated = $translator->trans('Symfony.hard',['name' => 'Carlos'],'contact');
-      return View::create($translated, Response::HTTP_OK);
-      return ['message' => $translated , 'data' => $contactRepository->findAll()];
+     public function getAction(){
+      return View::create($this->contactRepository->findAll(), Response::HTTP_OK);
      }
 
      /**
      * @Rest\Get(path="/contact/{id}")
      * @Rest\View(serializerGroups={"contact"}, serializerEnableMaxDepthChecks=true)
      */
-    public function getByIdAction(string $id, ContactRepository $contactRepository){
-      $contact = $contactRepository->find($id);
+    public function getByIdAction(string $id){
+      $contact = $this->contactRepository->find($id);
       $statusCode = $contact ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST;
-      $data = $contact ?? 'Contacto no existe';
+      $data = $contact ?? $this->translator->trans('Contact.notFound',[],'contact');
       return View::create($data, $statusCode);
      }
 
@@ -41,7 +63,7 @@ class ContactController extends AbstractFOSRestController{
      * @Rest\Post(path="/contact")
      * @Rest\View(serializerGroups={"contact"}, serializerEnableMaxDepthChecks=true)
      */
-    public function postAction(Request $request,EntityManagerInterface $em){
+    public function createAction(Request $request,EntityManagerInterface $em){
         $contactDto = new ContactDto();
         $form = $this->createForm(ContactFormType::class, $contactDto);
         $form->handleRequest($request);
@@ -49,11 +71,47 @@ class ContactController extends AbstractFOSRestController{
          $contact = new Contact();
          $contact->setName($contactDto->name);
          $contact->setLastname($contactDto->lastname);
-         $em->persist($contact);
-         $em->flush();
+         $this->em->persist($contact);
+         $this->em->flush();
          return $contact;
         }
         return $form;
      }
+
+     /**
+     * @Rest\Post(path="/contact/{id}")
+     * @Rest\View(serializerGroups={"contact"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function updateAction(string $id, Request $request,EntityManagerInterface $em){
+      $contact = $this->contactRepository->find($id);
+      $contactDto = new ContactDto();
+      $form = $this->createForm(ContactFormType::class, $contactDto);
+      $form->handleRequest($request);
+      if($contact && $form->isValid() && $form->isSubmitted()){
+       $contact->setName($contactDto->name);
+       $contact->setLastname($contactDto->lastname);
+       $this->em->flush();
+       return $contact;
+      }
+      return View::create(null,Response::HTTP_BAD_REQUEST);
+   }
+
+
+     /**
+     * @Rest\Delete(path="/contact/{id}")
+     * @Rest\View(serializerGroups={"contact"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function deleteAction(string $id){
+      $contact = $this->contactRepository->find($id);
+      $statusCode = Response::HTTP_BAD_REQUEST;
+      if($contact){
+        $this->em->remove($contact);
+        $this->em->flush();
+        $statusCode = Response::HTTP_OK;
+      }
+      return View::create(null,$statusCode);
+   }
+
+
     
 }

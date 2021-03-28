@@ -15,6 +15,7 @@ composer require symfony/translation
 composer require symfony/security-bundle
 composer require lexik/jwt-authentication-bundle
 composer require gesdinet/jwt-refresh-token-bundle
+composer require stof/doctrine-extensions-bundle
 
 bin/console debug:router
 bin/console make:entity
@@ -26,6 +27,7 @@ bin/console make:user
 bin/console make:auth
 bin/console lexik:jwt:generate-keypair
 bin/console security:encode-password 123456
+bin/console doctrine:fixtures:load
 
 Argin2i hasher bcryptπ
 

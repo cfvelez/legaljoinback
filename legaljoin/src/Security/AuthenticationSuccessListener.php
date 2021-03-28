@@ -24,12 +24,10 @@ class AuthenticationSuccessListener
     {   
         $response = $event->getResponse();
         $data = $event->getData();
-        $tokenJWT = $data['token'];
         //unset($data['token']);
         //unset($data['refresh_token']);
-        $event->setData($data);
  
-         $response->headers->setCookie(new Cookie('BEARER', $tokenJWT, (
+         $response->headers->setCookie(new Cookie('BEARER', $data['token'], (
              new \DateTime())
              ->add(new \DateInterval('PT' . $this->jwtTokenTTL . 'S')), '/', null, $this->cookieSecure));
     

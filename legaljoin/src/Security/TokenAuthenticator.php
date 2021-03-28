@@ -19,7 +19,6 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     private $em;
     private $translator;
     private $logger;
-    const TOKEN = 'CFVELEZ';
 
     public function __construct(EntityManagerInterface $em, TranslatorInterface $translator, LoggerInterface $logger)
     {

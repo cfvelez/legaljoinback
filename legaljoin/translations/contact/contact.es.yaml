@@ -1,2 +1,2 @@
-Symfony:
-    hard: Symfony es dificil name
+Contact:
+    notFound: 'El contacto no existe'
