@@ -10,6 +10,9 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use App\Form\Model\ContactDto;
 use App\Entity\Contact;
+use Monolog\Logger;
+use PhpParser\Node\Stmt\TryCatch;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -31,12 +34,19 @@ class ContactController extends AbstractFOSRestController{
 
     private $translator;
 
+     /**
+     * @var LoggerInterface
+     */
+
+    private $logger;
+
     public function __construct(ContactRepository $contactRepository, 
                                 EntityManagerInterface $em,
-                                TranslatorInterface $translator)
+                                TranslatorInterface $translator, LoggerInterface $logger)
     {
         $this->contactRepository = $contactRepository;
         $this->em = $em;
+        $this->logger = $logger;
         $this->translator = $translator;
     }
 
@@ -63,26 +73,32 @@ class ContactController extends AbstractFOSRestController{
      * @Rest\Post(path="/contact")
      * @Rest\View(serializerGroups={"contact"}, serializerEnableMaxDepthChecks=true)
      */
-    public function createAction(Request $request,EntityManagerInterface $em){
+    public function createAction(Request $request){
         $contactDto = new ContactDto();
         $form = $this->createForm(ContactFormType::class, $contactDto);
-        $form->handleRequest($request);
-        if($form->isValid() && $form->isSubmitted()){
-         $contact = new Contact();
-         $contact->setName($contactDto->name);
-         $contact->setLastname($contactDto->lastname);
-         $this->em->persist($contact);
-         $this->em->flush();
-         return $contact;
+        $this->logger->error($request->get('name'));
+        try{
+          $form->handleRequest($request);
+          if($form->isValid() && $form->isSubmitted()){
+            $contact = new Contact();
+            $contact->setName($contactDto->name);
+            $contact->setLastname($contactDto->lastname);
+            $this->em->persist($contact);
+            $this->em->flush();
+            return $contact;
+          }
+          return $form;
         }
-        return $form;
+        catch(\Exception $e) {
+          return View::create('Bad request!', Response::HTTP_BAD_REQUEST);  
+        }
      }
 
      /**
      * @Rest\Post(path="/contact/{id}")
      * @Rest\View(serializerGroups={"contact"}, serializerEnableMaxDepthChecks=true)
      */
-    public function updateAction(string $id, Request $request,EntityManagerInterface $em){
+    public function updateAction(string $id, Request $request){
       $contact = $this->contactRepository->find($id);
       $contactDto = new ContactDto();
       $form = $this->createForm(ContactFormType::class, $contactDto);
