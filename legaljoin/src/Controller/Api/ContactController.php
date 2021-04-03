@@ -76,7 +76,7 @@ class ContactController extends AbstractFOSRestController{
     public function createAction(Request $request){
         $contactDto = new ContactDto();
         $form = $this->createForm(ContactFormType::class, $contactDto);
-        $this->logger->error($request->get('name'));
+       
         try{
           $form->handleRequest($request);
           if($form->isValid() && $form->isSubmitted()){
@@ -102,14 +102,19 @@ class ContactController extends AbstractFOSRestController{
       $contact = $this->contactRepository->find($id);
       $contactDto = new ContactDto();
       $form = $this->createForm(ContactFormType::class, $contactDto);
-      $form->handleRequest($request);
-      if($contact && $form->isValid() && $form->isSubmitted()){
-       $contact->setName($contactDto->name);
-       $contact->setLastname($contactDto->lastname);
-       $this->em->flush();
-       return $contact;
+      try{
+        $form->handleRequest($request);
+        if($contact && $form->isValid() && $form->isSubmitted()){
+        $contact->setName($contactDto->name);
+        $contact->setLastname($contactDto->lastname);
+        $this->em->flush();
+        return $contact;
+        }
+        return $form;
       }
-      return View::create(null,Response::HTTP_BAD_REQUEST);
+      catch(\Exception $e) {
+        return View::create('Bad request!', Response::HTTP_BAD_REQUEST);  
+      }
    }
 
 
