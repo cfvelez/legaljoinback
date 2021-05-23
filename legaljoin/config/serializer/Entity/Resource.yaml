@@ -1,0 +1,9 @@
+App\Entity\Resource:
+    attributes:
+        id:
+            groups: ['resource']
+        name:
+            groups: ['resource']
+        title:
+            groups: ['resource']
+    

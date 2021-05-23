@@ -105,10 +105,10 @@ class ContactController extends AbstractFOSRestController{
       try{
         $form->handleRequest($request);
         if($contact && $form->isValid() && $form->isSubmitted()){
-        $contact->setName($contactDto->name);
-        $contact->setLastname($contactDto->lastname);
-        $this->em->flush();
-        return $contact;
+          $contact->setName($contactDto->name);
+          $contact->setLastname($contactDto->lastname);
+          $this->em->flush();
+          return $contact;
         }
         return $form;
       }
@@ -132,7 +132,5 @@ class ContactController extends AbstractFOSRestController{
       }
       return View::create(null,$statusCode);
    }
-
-
     
 }
