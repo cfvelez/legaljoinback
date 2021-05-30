@@ -14,6 +14,7 @@ use App\Form\Model\ResourceDto;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use App\Service\FileUploader;
 
 class ResourceController extends AbstractFOSRestController{
 
@@ -41,19 +42,21 @@ class ResourceController extends AbstractFOSRestController{
     public function __construct(ResourceRepository $resourceRepository, 
                                 EntityManagerInterface $em,
                                 TranslatorInterface $translator, 
-                                LoggerInterface $logger)
+                                LoggerInterface $logger,
+                                FileUploader $fileUploader)
     {
         $this->ResourceRepository = $resourceRepository;
         $this->em = $em;
         $this->logger = $logger;
         $this->translator = $translator;
+        $this->fileUploader = $fileUploader;
     }
 
     /**
      * @Rest\Get(path="/resource")
      * @Rest\View(serializerGroups={"resource"}, serializerEnableMaxDepthChecks=true)
      */
-     public function test(){
+     public function all(){
       return View::create($this->ResourceRepository->findAll(), Response::HTTP_OK);
      }
 
@@ -62,17 +65,18 @@ class ResourceController extends AbstractFOSRestController{
      * @Rest\View(serializerGroups={"resource"}, serializerEnableMaxDepthChecks=true)
      */
     public function upload(Request $request){
-        $requestDto = new ResourceDto();
-        $form = $this->createForm(ResourceFormType::class, $requestDto);
+        $resourcetDto = new ResourceDto();
+        $form = $this->createForm(ResourceFormType::class, $resourcetDto);
        
         try{
           $form->handleRequest($request);
           if($form->isValid() && $form->isSubmitted()){
             $resource = new Resource();
-            $resource->setName($requestDto->name);
-            $resource->setTitle($requestDto->title);
-            $resource->setOwnerId($requestDto->ownner_id);
-            $resource->setType($requestDto->type);
+            $resource->setTitle($resourcetDto->title);
+            $filename = $this->fileUploader->uploadBase64File($resourcetDto->base64File);
+            $resource->setName($filename);
+            $resource->setOwnerId(1);
+            $resource->setType(1);
             $resource->setDeleted(0);
             $this->em->persist($resource);
             $this->em->flush();
