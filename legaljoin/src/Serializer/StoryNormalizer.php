@@ -5,8 +5,10 @@ namespace App\Serializer;
 use App\Entity\Story;
 use Symfony\Component\HttpFoundation\UrlHelper;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+
 
 class StoryNormalizer implements ContextAwareNormalizerInterface
 {
@@ -25,10 +27,11 @@ class StoryNormalizer implements ContextAwareNormalizerInterface
 
     public function normalize($story, $format = null, array $context = [])
     {
-        $data = $this->normalizer->normalize($story, $format, $context);
+        $data = $this->normalizer->normalize($story, $format, $context, new ReflectionExtractor());
         
         if (!empty($story->getContact())) {
-            $data['contact'] = $story->getContact()->getId();
+            $contact = $story->getContact();
+            $data['contact'] = array('id' => $contact->getId(), 'name' => $contact->getName(), 'lastname' => $contact->getLastname());
         }
         return $data;
     }
