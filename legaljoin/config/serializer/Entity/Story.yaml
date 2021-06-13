@@ -1,0 +1,11 @@
+App\Entity\Story:
+    attributes:
+        id:
+            groups: ['story']
+        title:
+            groups: ['story']
+        description:
+            groups: ['story']
+        contact:
+            groups: ['contact']
+    

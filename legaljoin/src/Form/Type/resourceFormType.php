@@ -13,7 +13,10 @@ class ResourceFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('title', TextType::class)->add('ownner_id', NumberType::class)->add('base64File', TextType::class);
+        $builder
+                ->add('title', TextType::class)
+                ->add('ownner_id', NumberType::class)
+                ->add('base64File', TextType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
