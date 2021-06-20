@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\StoryRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
@@ -36,6 +38,15 @@ class Story
      */
     private $contact;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Storypoint::class, mappedBy="story", orphanRemoval=true)
+     */
+    private $storypoints;
+
+    public function __construct()
+    {
+        $this->storypoints = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -77,4 +88,35 @@ class Story
 
         return $this;
     }
+
+    /**
+     * @return Collection|Storypoint[]
+     */
+    public function getStorypoints(): Collection
+    {
+        return $this->storypoints;
+    }
+
+    public function addStorypoint(Storypoint $storypoint): self
+    {
+        if (!$this->storypoints->contains($storypoint)) {
+            $this->storypoints[] = $storypoint;
+            $storypoint->setStory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStorypoint(Storypoint $storypoint): self
+    {
+        if ($this->storypoints->removeElement($storypoint)) {
+            // set the owning side to null (unless already changed)
+            if ($storypoint->getStory() === $this) {
+                $storypoint->setStory(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

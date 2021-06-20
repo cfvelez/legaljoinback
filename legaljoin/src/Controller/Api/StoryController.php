@@ -63,7 +63,18 @@ class StoryController extends AbstractFOSRestController{
       return View::create($this->storyRepository->findAll(), Response::HTTP_OK);
      }
 
-      /**
+     /**
+     * @Rest\Get(path="/story/{id}")
+     * @Rest\View(serializerGroups={"story"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function getByIdAction(string $id){
+      $story = $this->storyRepository->find($id);
+      $statusCode = $story ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST;
+      $data = $story ?? $this->translator->trans('Story.notFound',[],'story');
+      return View::create($data, $statusCode);
+     }
+
+    /**
      * @Rest\Post(path="/story")
      * @Rest\View(serializerGroups={"story"}, serializerEnableMaxDepthChecks=true)
      */
@@ -93,6 +104,40 @@ class StoryController extends AbstractFOSRestController{
           return View::create('Bad request!', Response::HTTP_BAD_REQUEST);  
         }
      }
+
+    /**
+     * @Rest\Post(path="/story/{id}")
+     * @Rest\View(serializerGroups={"story"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function updateAction(string $id, Request $request, ContactRepository $contactRepository){
+      $story = $this->storyRepository->find($id);
+
+      if(!$story)
+          return View::create($this->translator->trans('Story.notFound',[],'story'), Response::HTTP_BAD_REQUEST); 
+
+      $storyDto = new StoryDto();
+      $form = $this->createForm(StoryFormType::class, $storyDto);
+     
+      try{
+        $form->handleRequest($request);
+        if($form->isValid() && $form->isSubmitted()){
+          $contactId = $request->request->get('contactId');
+          $contact = $contactRepository->find($contactId);
+          if(!$contact)
+              return View::create('Bad request!', Response::HTTP_BAD_REQUEST);   
+          
+          $story->setTitle($storyDto->title);
+          $story->setDescription($storyDto->description);
+          $story->setContact($contact);
+          $this->em->flush();
+          return $story;
+        }
+        return $form;
+      }
+      catch(\Exception $e) {
+        return View::create('Bad request!', Response::HTTP_BAD_REQUEST);  
+      }
+   }
 
      
 }

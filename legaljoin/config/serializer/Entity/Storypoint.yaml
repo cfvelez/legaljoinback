@@ -1,0 +1,13 @@
+App\Entity\Storypoint:
+    attributes:
+        id:
+            groups: ['storypoint']
+        name:
+            groups: ['storypoint']
+        description:
+            groups: ['storypoint']
+        appointment_time:
+            groups: ['storypoint']
+        story:
+            groups: ['storypoint']
+    

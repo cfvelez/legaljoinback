@@ -117,7 +117,6 @@ class ContactController extends AbstractFOSRestController{
       }
    }
 
-
      /**
      * @Rest\Delete(path="/contact/{id}")
      * @Rest\View(serializerGroups={"contact"}, serializerEnableMaxDepthChecks=true)
