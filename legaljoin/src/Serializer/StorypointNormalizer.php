@@ -26,7 +26,8 @@ class StorypointNormalizer implements ContextAwareNormalizerInterface
         
         if (!empty($storypoint->getStory())) {
             $story = $storypoint->getStory();
-            $data['story'] = array('id' => $story->getId(), 'title' => $story->getTitle(), 'description' => $story->getLastname());
+            $data["appointment_time"] = $storypoint->getAppointmentTime()->format('Y-m-d H:i:s');
+            $data['story'] = array('id' => $story->getId(), 'title' => $story->getTitle());
         }
         return $data;
     }

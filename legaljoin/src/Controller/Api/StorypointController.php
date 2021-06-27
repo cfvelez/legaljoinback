@@ -76,7 +76,7 @@ class StorypointController extends AbstractFOSRestController{
 
     /**
      * @Rest\Post(path="/storypoint")
-     * @Rest\View(serializerGroups={"story"}, serializerEnableMaxDepthChecks=true)
+     * @Rest\View(serializerGroups={"storypoint"}, serializerEnableMaxDepthChecks=true)
      */
     public function createAction(Request $request, StoryRepository $storyRepository){
         $storypointDto = new StorypointDto();
@@ -85,14 +85,15 @@ class StorypointController extends AbstractFOSRestController{
         try{
           $form->handleRequest($request);
           if($form->isValid() && $form->isSubmitted()){
-            $storyId = $request->request->get('storyId');
+            $storyId = $storypointDto->storyId;
             $story = $storyRepository->find($storyId);
             if(!$story)
-                return View::create('Bad request!', Response::HTTP_BAD_REQUEST);   
+                return View::create('no Story found!', Response::HTTP_BAD_REQUEST);   
             
             $storypoint = new Storypoint();
-            $storypoint->setName($storypointDto->title);
+            $storypoint->setName($storypointDto->name);
             $storypoint->setDescription($storypointDto->description);
+            $storypoint->setAppointmentTime($storypointDto->appointmentAt);
             $storypoint->setStory($story);
             $this->em->persist($storypoint);
             $this->em->flush();
@@ -101,7 +102,7 @@ class StorypointController extends AbstractFOSRestController{
           return $form;
         }
         catch(\Exception $e) {
-          return View::create('Bad request!', Response::HTTP_BAD_REQUEST);  
+          return View::create($e, Response::HTTP_BAD_REQUEST);  
         }
      }
 
@@ -109,26 +110,20 @@ class StorypointController extends AbstractFOSRestController{
      * @Rest\Post(path="/storypoint/{id}")
      * @Rest\View(serializerGroups={"storypoint"}, serializerEnableMaxDepthChecks=true)
      */
-    public function updateAction(string $id, Request $request, StoryRepository $storyRepository){
+    public function updateAction(string $id, Request $request){
       $storypoint = $this->storypointRepository->find($id);
 
       if(!$storypoint)
-          return View::create($this->translator->trans('Story.notFound',[],'story'), Response::HTTP_BAD_REQUEST); 
+          return View::create('Storypoint no encontrado', Response::HTTP_BAD_REQUEST); 
 
       $storypointDto = new StorypointDto();
       $form = $this->createForm(StorypointFormType::class, $storypointDto);
-     
       try{
         $form->handleRequest($request);
         if($form->isValid() && $form->isSubmitted()){
-          $storyId = $request->request->get('storyId');
-          $story = $storyRepository->find($storyId);
-          if(!$story)
-              return View::create('Bad request!', Response::HTTP_BAD_REQUEST);   
-          
-          $storypoint->setName($storypointDto->title);
+          $storypoint->setName($storypointDto->name);
           $storypoint->setDescription($storypointDto->description);
-          $storypoint->setStory($story);
+          $storypoint->setAppointmentTime($storypointDto->appointmentAt);
           $this->em->flush();
           return $storypoint;
         }

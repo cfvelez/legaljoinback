@@ -18,8 +18,13 @@ class StorypointFormType extends AbstractType
                 ->add('id', NumberType::class)
                 ->add('name', TextType::class)
                 ->add('description', TextType::class)
-                ->add('appointmentAt',  DateTimeType::class)
-                ->add('storyId', NumberType::class);
+                ->add('appointmentAt',  DateTimeType::class,
+                        [
+                            'format' => 'yyyy-MM-dd  HH:mm:ss', 
+                            'widget' => 'single_text',
+                            'html5' => false
+                        ]
+                )->add('storyId', NumberType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

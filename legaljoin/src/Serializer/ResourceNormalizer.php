@@ -10,9 +10,6 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class ResourceNormalizer implements ContextAwareNormalizerInterface
 {
-    private ObjectNormalizer $normalizer;
-    private UrlHelper $urlHelper;
-
     public function __construct(
         ObjectNormalizer $normalizer,
         UrlHelper $urlHelper,
@@ -28,6 +25,10 @@ class ResourceNormalizer implements ContextAwareNormalizerInterface
         $data = $this->normalizer->normalize($resource, $format, $context);
         if (!empty($resource->getName())) {
             $data['name'] = $this->urlHelper->getAbsoluteUrl('/storage/default/' . $resource->getName());
+        }
+        $storypoint = $resource->getStorypoint();
+        if(!empty($storypoint)){
+            $data['storypoint'] = $storypoint->getId();
         }
         return $data;
     }

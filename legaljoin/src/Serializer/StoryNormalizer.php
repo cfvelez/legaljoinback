@@ -23,7 +23,6 @@ class StoryNormalizer implements ContextAwareNormalizerInterface
     public function normalize($story, $format = null, array $context = [])
     {
         $data = $this->normalizer->normalize($story, $format, $context, new ReflectionExtractor());
-        
         if (!empty($story->getContact())) {
             $contact = $story->getContact();
             $data['contact'] = array('id' => $contact->getId(), 'name' => $contact->getName(), 'lastname' => $contact->getLastname());

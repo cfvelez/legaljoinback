@@ -23,6 +23,7 @@ bin/console make:entity
 bin/console make:entity --regenerate
 bin/console make:migration
 bin/console doctrine:migrations:migrate
+bin/console doctrine:migrations:diff
 bin/console doctrine:schema:update --force
 bin/console cache:clear
 bin/console make:user
@@ -31,10 +32,12 @@ bin/console lexik:jwt:generate-keypair
 bin/console security:encode-password 123456
 bin/console doctrine:fixtures:load
 bin/console make:controller ResourceController
+bin/console make:form
 
 Argin2i hasher bcryptπ
 
 CREATE USER 'legaljoin'@'%' IDENTIFIED BY 'Legaljoin@2021';
 GRANT ALL privileges on legaljoin.* to legaljoin@'%';
+mysql -u legaljoin -p
 
 FLUSH PRIVILEGES;

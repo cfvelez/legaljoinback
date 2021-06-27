@@ -6,4 +6,6 @@ App\Entity\Resource:
             groups: ['resource']
         name:
             groups: ['resource']
+        storypoint:
+            groups: ['resource']
     

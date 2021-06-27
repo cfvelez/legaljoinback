@@ -8,4 +8,6 @@ App\Entity\Story:
             groups: ['story']
         contact:
             groups: ['contact']
+        storypoints:
+            groups: ['story']
     

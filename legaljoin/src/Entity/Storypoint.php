@@ -3,14 +3,19 @@
 namespace App\Entity;
 
 use App\Repository\StorypointRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 /**
  * @ORM\Entity(repositoryClass=StorypointRepository::class)
  */
 class Storypoint
-{
-    /**
+{   
+    use TimestampableEntity;
+    
+    /** 
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -37,6 +42,17 @@ class Storypoint
      * @ORM\JoinColumn(nullable=false)
      */
     private $story;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Resource::class, mappedBy="storypoint")
+     */
+    private $resourceslist;
+
+    public function __construct()
+    {
+        $this->resource = new ArrayCollection();
+        $this->resourceslist = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -87,6 +103,36 @@ class Storypoint
     public function setStory(?story $story): self
     {
         $this->story = $story;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Resource[]
+     */
+    public function getResourceslist(): Collection
+    {
+        return $this->resourceslist;
+    }
+
+    public function addResourceslist(Resource $resourceslist): self
+    {
+        if (!$this->resourceslist->contains($resourceslist)) {
+            $this->resourceslist[] = $resourceslist;
+            $resourceslist->setStorypoint($this);
+        }
+
+        return $this;
+    }
+
+    public function removeResourceslist(Resource $resourceslist): self
+    {
+        if ($this->resourceslist->removeElement($resourceslist)) {
+            // set the owning side to null (unless already changed)
+            if ($resourceslist->getStorypoint() === $this) {
+                $resourceslist->setStorypoint(null);
+            }
+        }
 
         return $this;
     }

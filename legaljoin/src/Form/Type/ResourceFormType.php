@@ -16,6 +16,7 @@ class ResourceFormType extends AbstractType
         $builder
                 ->add('title', TextType::class)
                 ->add('ownner_id', NumberType::class)
+                ->add('storypoint', NumberType::class)
                 ->add('base64File', TextType::class);
     }
 
@@ -34,5 +35,10 @@ class ResourceFormType extends AbstractType
     public function getTitle()
     {
         return '';
+    }
+
+    public function getStorypoint()
+    {
+        return null;
     }
 }

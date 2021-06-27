@@ -43,6 +43,11 @@ class Resource
      */
     private $title;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Storypoint::class, inversedBy="resourceslist")
+     */
+    private $storypoint;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -107,4 +112,17 @@ class Resource
 
         return $this;
     }
+
+    public function getStorypoint(): ?storypoint
+    {
+        return $this->storypoint;
+    }
+
+    public function setStorypoint(?storypoint $storypoint): self
+    {
+        $this->storypoint = $storypoint;
+
+        return $this;
+    }
+
 }

@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Entity\Resource;
 use App\Repository\ResourceRepository;
+use App\Repository\StorypointRepository;
 use App\Form\Type\ResourceFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -88,4 +89,17 @@ class ResourceController extends AbstractFOSRestController{
           return View::create('Bad request!', Response::HTTP_BAD_REQUEST);  
         }
     }
+
+    /**
+     * @Rest\Get(path="/resource/{id}")
+     * @Rest\View(serializerGroups={"resource"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function updateAction(string $id){
+      $resource = $this->ResourceRepository->find($id);
+      if(!$resource)
+          return View::create('Recurso no encontrado', Response::HTTP_BAD_REQUEST); 
+
+      return $resource;
+    }
+   
 }
