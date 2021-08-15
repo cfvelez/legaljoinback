@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\Resource;
+use App\Entity\Storypoint;
 use App\Repository\ResourceRepository;
 use App\Repository\StorypointRepository;
 use App\Form\Type\ResourceFormType;
@@ -65,7 +66,7 @@ class ResourceController extends AbstractFOSRestController{
      * @Rest\Post(path="/resource")
      * @Rest\View(serializerGroups={"resource"}, serializerEnableMaxDepthChecks=true)
      */
-    public function upload(Request $request){
+    public function upload(Request $request, StorypointRepository $storypointRepository){
         $resourcetDto = new ResourceDto();
         $form = $this->createForm(ResourceFormType::class, $resourcetDto);
        
@@ -76,6 +77,9 @@ class ResourceController extends AbstractFOSRestController{
             $resource->setTitle($resourcetDto->title);
             $filename = $this->fileUploader->uploadBase64File($resourcetDto->base64File);
             $resource->setName($filename);
+            $storypoint = $this->storypointRepository->find($resourcetDto->storypoint_id);
+            if($storypoint)
+              $resource->setStorypoint($storypoint);
             $resource->setOwnerId(1);
             $resource->setType(1);
             $resource->setDeleted(0);

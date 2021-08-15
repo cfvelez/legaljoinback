@@ -9,5 +9,5 @@ App\Entity\Story:
         contact:
             groups: ['contact']
         storypoints:
-            groups: ['story']
+            groups: ['storypoint']
     
