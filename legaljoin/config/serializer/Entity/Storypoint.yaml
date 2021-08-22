@@ -9,5 +9,4 @@ App\Entity\Storypoint:
         appointment_time:
             groups: ['storypoint']
         story:
-            groups: ['storypoint']
-    
+            groups: ['story']

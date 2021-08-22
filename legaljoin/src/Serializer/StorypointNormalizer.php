@@ -21,13 +21,13 @@ class StorypointNormalizer implements ContextAwareNormalizerInterface
     }
 
     public function normalize($storypoint, $format = null, array $context = [])
-    {
+    {   
         $data = $this->normalizer->normalize($storypoint, $format, $context, new ReflectionExtractor());
+        $data["appointment_time"] = $storypoint->getAppointmentTime() ? $storypoint->getAppointmentTime()->format('Y-m-d H:i:s') : null;
         
-        if (!empty($storypoint->getStory())) {
-            $story = $storypoint->getStory();
-            $data["appointment_time"] = $storypoint->getAppointmentTime()->format('Y-m-d H:i:s');
-            $data['story'] = array('id' => $story->getId(), 'title' => $story->getTitle());
+        $story = $storypoint->getStory();
+        if (!empty($story)) {
+            $data['story'] = array('id' => $story->getId(), 'title' => $story->getTitle() , 'description' => $story->getDescription());
         }
         return $data;
     }

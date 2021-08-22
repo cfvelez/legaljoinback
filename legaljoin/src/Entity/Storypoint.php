@@ -50,7 +50,6 @@ class Storypoint
 
     public function __construct()
     {
-        $this->resource = new ArrayCollection();
         $this->resourceslist = new ArrayCollection();
     }
 

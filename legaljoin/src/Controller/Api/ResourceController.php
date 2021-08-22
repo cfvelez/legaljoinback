@@ -77,7 +77,7 @@ class ResourceController extends AbstractFOSRestController{
             $resource->setTitle($resourcetDto->title);
             $filename = $this->fileUploader->uploadBase64File($resourcetDto->base64File);
             $resource->setName($filename);
-            $storypoint = $this->storypointRepository->find($resourcetDto->storypoint_id);
+            $storypoint = $storypointRepository->find($resourcetDto->storypoint_id);
             if($storypoint)
               $resource->setStorypoint($storypoint);
             $resource->setOwnerId(1);

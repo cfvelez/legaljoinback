@@ -31,7 +31,6 @@ class StoryNormalizer implements ContextAwareNormalizerInterface
         if (!empty($story->getStorypoints())) {
             
             foreach($story->getStorypoints() as $storypoint){
-                $this->logger->info($storypoint->getName());
                 $data['storypoints'][] = array('id' => $storypoint->getId(), 'name' => $storypoint->getName());
             }
             
