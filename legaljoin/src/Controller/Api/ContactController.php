@@ -70,6 +70,18 @@ class ContactController extends AbstractFOSRestController{
      }
 
      /**
+     * @Rest\Get(path="/contact/search/{text}")
+     * @Rest\View(serializerGroups={"contact"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function search(string $text){
+      // look for multiple Product objects matching the name, ordered by price
+      $contacts = $this->contactRepository->findByTerm($text,$this->logger);
+      $statusCode =  Response::HTTP_OK;
+      $data = $contacts ?? $this->translator->trans('Contact.notFound',[],'contact');
+      return View::create($data, $statusCode);
+     }
+
+     /**
      * @Rest\Post(path="/contact")
      * @Rest\View(serializerGroups={"contact"}, serializerEnableMaxDepthChecks=true)
      */
