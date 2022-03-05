@@ -74,6 +74,24 @@ class StoryController extends AbstractFOSRestController{
       return View::create($data, $statusCode);
      }
 
+      /**
+     * @Rest\Get(path="/story/contact/{id}")
+     * @Rest\View(serializerGroups={"story"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function getByContactIdAction(string $id,ContactRepository $contactRepository){
+      $data = $this->translator->trans('Contact.notFound',[],'contact');
+      $statusCode = Response::HTTP_BAD_REQUEST;
+      $contact = $contactRepository->find($id);
+
+      if($contact){
+        $stories = $contact->getStories();
+        $statusCode = $stories ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST;
+        $data = $stories ?? $this->translator->trans('Story.notFound',[],'story');
+      }
+      return View::create($data, $statusCode);
+      
+     }
+
     /**
      * @Rest\Post(path="/story")
      * @Rest\View(serializerGroups={"story"}, serializerEnableMaxDepthChecks=true)
@@ -81,7 +99,7 @@ class StoryController extends AbstractFOSRestController{
     public function createAction(Request $request, ContactRepository $contactRepository){
         $storyDto = new StoryDto();
         $form = $this->createForm(StoryFormType::class, $storyDto);
-       
+
         try{
           $form->handleRequest($request);
           if($form->isValid() && $form->isSubmitted()){
@@ -98,6 +116,7 @@ class StoryController extends AbstractFOSRestController{
             $this->em->flush();
             return $story;
           }
+          $this->logger->info('ojoooo!!');
           return $form;
         }
         catch(\Exception $e) {
