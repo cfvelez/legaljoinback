@@ -158,5 +158,20 @@ class StoryController extends AbstractFOSRestController{
       }
    }
 
+   /**
+     * @Rest\Delete(path="/story/{id}")
+     * @Rest\View(serializerGroups={"story"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function deleteAction(string $id){
+      $story = $this->storyRepository->find($id);
+      $statusCode = Response::HTTP_BAD_REQUEST;
+      if($story){
+        $this->em->remove($story);
+        $this->em->flush();
+        $statusCode = Response::HTTP_OK;
+      }
+      return View::create(null,$statusCode);
+   }
+
      
 }
