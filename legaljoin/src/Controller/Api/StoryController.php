@@ -13,6 +13,7 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Psr\Log\LoggerInterface;
 use App\Form\Model\StoryDto;
+use Monolog\Logger;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -116,7 +117,6 @@ class StoryController extends AbstractFOSRestController{
             $this->em->flush();
             return $story;
           }
-          $this->logger->info('ojoooo!!');
           return $form;
         }
         catch(\Exception $e) {
@@ -125,7 +125,7 @@ class StoryController extends AbstractFOSRestController{
      }
 
     /**
-     * @Rest\Post(path="/story/{id}")
+     * @Rest\Post(path="/story/{id}",requirements={"id"="\d+"})
      * @Rest\View(serializerGroups={"story"}, serializerEnableMaxDepthChecks=true)
      */
     public function updateAction(string $id, Request $request, ContactRepository $contactRepository){
@@ -173,5 +173,17 @@ class StoryController extends AbstractFOSRestController{
       return View::create(null,$statusCode);
    }
 
+    /**
+     * @Rest\Post(path="/story/search/{contactId}",requirements={"contactId"="\d+"})
+     * @Rest\View(serializerGroups={"story"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function search(string $contactId,Request $request){
+      // look for multiple Product objects matching the name, ordered by price
+      $term = $request->request->get('term');
+      $stories = $this->storyRepository->findByTerm($contactId,$term);
+      $statusCode =  Response::HTTP_OK;
+      $data = $stories ?? $this->translator->trans('Story.notFound',[],'story');
+      return View::create($data, $statusCode);
+     }
      
 }

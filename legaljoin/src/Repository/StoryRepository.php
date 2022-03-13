@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Story;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 
 /**
  * @method Story|null find($id, $lockMode = null, $lockVersion = null)
@@ -13,10 +14,26 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Story[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class StoryRepository extends ServiceEntityRepository
-{
+{   
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Story::class);
+
+    }
+
+    // /**
+    //  * @return Story[] Returns an array of Story objects
+    //  */
+    
+    public function findByTerm($contactId,$searchterm)
+    {
+        return $this->createQueryBuilder('s')
+            ->where('s.contact = :contactId')
+            ->andWhere('UPPER(s.title) LIKE :searchterm')
+            ->setParameter('contactId', $contactId)
+            ->setParameter('searchterm', '%'.strtoupper($searchterm).'%')
+            ->getQuery()
+            ->getResult();
     }
 
     // /**

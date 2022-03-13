@@ -70,18 +70,6 @@ class ContactController extends AbstractFOSRestController{
      }
 
      /**
-     * @Rest\Get(path="/contact/search/{text}")
-     * @Rest\View(serializerGroups={"contact"}, serializerEnableMaxDepthChecks=true)
-     */
-    public function search(string $text){
-      // look for multiple Product objects matching the name, ordered by price
-      $contacts = $this->contactRepository->findByTerm($text,$this->logger);
-      $statusCode =  Response::HTTP_OK;
-      $data = $contacts ?? $this->translator->trans('Contact.notFound',[],'contact');
-      return View::create($data, $statusCode);
-     }
-
-     /**
      * @Rest\Post(path="/contact")
      * @Rest\View(serializerGroups={"contact"}, serializerEnableMaxDepthChecks=true)
      */
@@ -107,7 +95,7 @@ class ContactController extends AbstractFOSRestController{
      }
 
      /**
-     * @Rest\Post(path="/contact/{id}")
+     * @Rest\Post(path="/contact/{id}",requirements={"id"="\d+"})
      * @Rest\View(serializerGroups={"contact"}, serializerEnableMaxDepthChecks=true)
      */
     public function updateAction(string $id, Request $request){
@@ -122,7 +110,7 @@ class ContactController extends AbstractFOSRestController{
           $this->em->flush();
           return $contact;
         }
-        return $form;
+        return View::create('Bad request!', Response::HTTP_BAD_REQUEST);    
       }
       catch(\Exception $e) {
         return View::create('Bad request!', Response::HTTP_BAD_REQUEST);  
@@ -143,5 +131,18 @@ class ContactController extends AbstractFOSRestController{
       }
       return View::create(null,$statusCode);
    }
+
+    /**
+     * @Rest\Post(path="/contact/search")
+     * @Rest\View(serializerGroups={"contact"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function search(Request $request){
+      // look for multiple Product objects matching the name, ordered by price
+      $text = $request->request->get('term');
+      $contacts = $this->contactRepository->findByTerm($text);
+      $statusCode =  Response::HTTP_OK;
+      $data = $contacts ?? $this->translator->trans('Contact.notFound',[],'contact');
+      return View::create($data, $statusCode);
+     }
     
 }
