@@ -26,14 +26,17 @@ class StoryRepository extends ServiceEntityRepository
     //  */
     
     public function findByTerm($contactId,$searchterm)
-    {
-        return $this->createQueryBuilder('s')
-            ->where('s.contact = :contactId')
-            ->andWhere('UPPER(s.title) LIKE :searchterm')
-            ->setParameter('contactId', $contactId)
-            ->setParameter('searchterm', '%'.strtoupper($searchterm).'%')
-            ->getQuery()
-            ->getResult();
+    {   
+        $searchterm = str_replace(' ','',$searchterm);
+        
+        $conn = $this->getEntityManager()
+            ->getConnection();
+
+        $sql = "SELECT s.* FROM story s WHERE s.contact_id  = ".$contactId . " AND UPPER(REPLACE(s.title,' ','')) LIKE '%". $searchterm . "%'";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
+      
     }
 
     // /**

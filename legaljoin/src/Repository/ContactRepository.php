@@ -25,6 +25,8 @@ class ContactRepository extends ServiceEntityRepository
     
     public function findByTerm($searchterm)
     {
+        $searchterm = str_replace(' ','',$searchterm);
+        
         return $this->createQueryBuilder('c')
             ->andWhere('UPPER(CONCAT(c.name,c.lastname)) LIKE :searchterm')
             ->setParameter('searchterm', '%'.strtoupper($searchterm).'%')
