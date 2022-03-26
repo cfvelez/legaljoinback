@@ -75,7 +75,7 @@ class StoryController extends AbstractFOSRestController{
       return View::create($data, $statusCode);
      }
 
-      /**
+    /**
      * @Rest\Get(path="/story/contact/{id}")
      * @Rest\View(serializerGroups={"story"}, serializerEnableMaxDepthChecks=true)
      */

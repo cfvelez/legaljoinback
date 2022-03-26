@@ -57,10 +57,26 @@ class StorypointController extends AbstractFOSRestController{
      * @Rest\View(serializerGroups={"storypoint"}, serializerEnableMaxDepthChecks=true)
      */
      public function all(){
-
       $storypoints = $this->storypointRepository->findAll();
-
       return View::create($storypoints, Response::HTTP_OK);
+     }
+
+      /**
+     * @Rest\Get(path="/storypoint/story/{id}")
+     * @Rest\View(serializerGroups={"storypoint"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function getSttoryPointsByStoryIdAction(string $id,StoryRepository $storyRepository){
+      $data = $this->translator->trans('Story.notFound',[],'story');
+      $statusCode = Response::HTTP_BAD_REQUEST;
+      $story = $storyRepository->find($id);
+
+      if($story){
+        $storypoints = $story->getStorypoints();
+        $statusCode = $storypoints ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST;
+        $data = $storypoints ?? $this->translator->trans('Story.notFound',[],'story');
+      }
+      return View::create($data, $statusCode);
+      
      }
 
      /**
