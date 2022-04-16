@@ -165,5 +165,17 @@ class StorypointController extends AbstractFOSRestController{
       return View::create(null,$statusCode);
    }
 
+   /**
+     * @Rest\Post(path="/storypoint/search/{storyId}",requirements={"storyId"="\d+"})
+     * @Rest\View(serializerGroups={"storypoint"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function search(string $storyId,Request $request){
+      $term = $request->request->get('term');
+      $events = $this->storypointRepository->findByTerm($storyId,$term);
+      $statusCode =  Response::HTTP_OK;
+      $data = $events ?? $this->translator->trans('Story.notFound',[],'story');
+      return View::create($data, $statusCode);
+     }
+
      
 }

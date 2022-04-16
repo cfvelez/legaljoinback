@@ -178,7 +178,6 @@ class StoryController extends AbstractFOSRestController{
      * @Rest\View(serializerGroups={"story"}, serializerEnableMaxDepthChecks=true)
      */
     public function search(string $contactId,Request $request){
-      // look for multiple Product objects matching the name, ordered by price
       $term = $request->request->get('term');
       $stories = $this->storyRepository->findByTerm($contactId,$term);
       $statusCode =  Response::HTTP_OK;

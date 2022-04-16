@@ -20,6 +20,24 @@ class StorypointRepository extends ServiceEntityRepository
     }
 
     // /**
+    //  * @return StoryPoint[] Returns an array of Storypoint of objects
+    //  */
+    
+    public function findByTerm($storyId,$searchterm)
+    {   
+        $searchterm = str_replace(' ','',$searchterm);
+        
+        $conn = $this->getEntityManager()
+            ->getConnection();
+
+        $sql = "SELECT s.* FROM storypoint s WHERE s.story_id  = ".$storyId . " AND UPPER(REPLACE(s.name,' ','')) LIKE '%". $searchterm . "%'";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
+      
+    }
+
+    // /**
     //  * @return Storypoint[] Returns an array of Storypoint objects
     //  */
     /*

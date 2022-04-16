@@ -137,7 +137,6 @@ class ContactController extends AbstractFOSRestController{
      * @Rest\View(serializerGroups={"contact"}, serializerEnableMaxDepthChecks=true)
      */
     public function search(Request $request){
-      // look for multiple Product objects matching the name, ordered by price
       $text = $request->request->get('term');
       $contacts = $this->contactRepository->findByTerm($text);
       $statusCode =  Response::HTTP_OK;
